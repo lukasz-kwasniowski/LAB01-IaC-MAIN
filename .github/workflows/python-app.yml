@@ -9,13 +9,17 @@ on:
 permissions:
   contents: read
  
-jobs:
-  build:
-    runs-on: ubuntu-latest
+jobs:        
+   build:
+    runs-on: ${{ matrix.version }}
  
     defaults:
       run:
         working-directory: ./example-app
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
  
     steps:
     - name: Checkout code
@@ -39,15 +43,20 @@ jobs:
         path: /home/runner/.cache/pypoetry/virtualenvs
         key: ${{ runner.os }}-venv
         
-  lint:
-    runs-on: ubuntu-latest
+   lint:
+    runs-on: ${{ matrix.os }}
     needs: build
 
     defaults:
       run:
         working-directory: ./example-app
+    
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
  
     steps:
+    
     - name: Checkout code
       uses: actions/checkout@v3
  
@@ -72,13 +81,17 @@ jobs:
 
         
 
-  formatter:
-    runs-on: ubuntu-latest
+   formatter:
+    runs-on: ${{ matrix.version }}
     needs: build
  
     defaults:
       run:
         working-directory: ./example-app
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
  
     steps:
     - name: Checkout code
@@ -107,13 +120,17 @@ jobs:
       run: |
         poetry run task formatter
          
-  security:
-    runs-on: ubuntu-latest
+   security:
+    runs-on: ${{ matrix.version }}
     needs: build
  
     defaults:
       run:
         working-directory: ./example-app
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
  
     steps:
     - name: Checkout code
@@ -142,13 +159,17 @@ jobs:
       run: |
          poetry run task security
 
-  unittests:
-    runs-on: ubuntu-latest
+   unittests:
+    runs-on: ${{ matrix.version }}
     needs: [lint, formatter, security]
    
     defaults:
        run:
           working-directory: ./example-app
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
           
     steps:
 
