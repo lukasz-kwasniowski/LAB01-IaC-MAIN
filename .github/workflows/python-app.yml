@@ -2,9 +2,9 @@ name: Python application
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 permissions:
   contents: read
@@ -17,52 +17,33 @@ jobs:
       run:
         working-directory: ./example-app
 
-    strategy:
-      matrix:
-        task: [dependencies, static_tests, unit_tests]
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.10"
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
 
-    - name: Install Poetry Action
-      uses: snok/install-poetry@v1
+      - name: Install Poetry Action
+        uses: snok/install-poetry@v1
 
-    - name: Task Dispatch
-      run: echo "::set-output name=task::${{ matrix.task }}"
-
-    - name: Install dependencies
-      run: |
-        if [[ "${{ matrix.task }}" == "dependencies" ]]; then
+      - name: Install dependencies
+        run: |
           poetry install --no-root
-        fi
 
-    - name: Lint
-      run: |
-        if [[ "${{ matrix.task }}" == "static_tests" ]]; then
-          poetry run task lint
-        fi
+      - name: Build
+        run: |
+          poetry build
 
-    - name: Formatter
-      run: |
-        if [[ "${{ matrix.task }}" == "static_tests" ]]; then
-          poetry run task formatter
-        fi
+      - name: Parallel Jobs
+        run: |
+          poetry run task init &
+          poetry run task formatter &
+          poetry run task security &
+          wait
 
-    - name: Security
-      run: |
-        if [[ "${{ matrix.task }}" == "static_tests" ]]; then
-          poetry run task security
-        fi
-
-    - name: Unit Tests
-      run: |
-        if [[ "${{ matrix.task }}" == "unit_tests" ]]; then
-          # Add your unit test command here
-          echo "Running unit tests..."
-        fi
+      - name: Unit Test
+        run: |
+          poetry run task test
