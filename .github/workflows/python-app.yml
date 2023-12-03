@@ -11,7 +11,7 @@ permissions:
  
 jobs:        
    build:
-    runs-on: ${{ matrix.version }}
+    runs-on: ${{ matrix.os }}
  
     defaults:
       run:
@@ -82,7 +82,7 @@ jobs:
         
 
    formatter:
-    runs-on: ${{ matrix.version }}
+    runs-on: ${{ matrix.os }}
     needs: build
  
     defaults:
@@ -121,7 +121,7 @@ jobs:
         poetry run task formatter
          
    security:
-    runs-on: ${{ matrix.version }}
+    runs-on: ${{ matrix.os }}
     needs: build
  
     defaults:
@@ -160,7 +160,7 @@ jobs:
          poetry run task security
 
    unittests:
-    runs-on: ${{ matrix.version }}
+    runs-on: ${{ matrix.os }}
     needs: [lint, formatter, security]
    
     defaults:
