@@ -1,49 +1,47 @@
 name: Python application
-
+ 
 on:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
   pull_request:
-    branches: ["main"]
-
+    branches: [ "main" ]
+ 
 permissions:
   contents: read
-
+ 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+ 
     defaults:
       run:
         working-directory: ./example-app
-
+ 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.10"
-
-      - name: Install Poetry Action
-        uses: snok/install-poetry@v1
-
-      - name: Install dependencies
-        run: |
-          poetry install --no-root
-
-      - name: Build
-        run: |
-          poetry build
-
-      - name: Parallel Jobs
-        run: |
-          poetry run task init &
-          poetry run task formatter &
-          poetry run task security &
-          wait
-
-      - name: Unit Test
-        run: |
-          poetry run task test
+    - name: Checkout code
+      uses: actions/checkout@v3
+ 
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+ 
+    - name: Install Poetry Action
+      uses: snok/install-poetry@v1
+ 
+    - name: Install dependencies
+      run: |
+        poetry install --no-root
+ 
+    - name: Lint
+      run: |
+        poetry run task lint
+ 
+    - name: Formatter
+      run: |
+        poetry run task formatter
+ 
+ 
+    - name: Security
+      run: |
+        poetry run task security
