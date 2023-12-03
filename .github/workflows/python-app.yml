@@ -16,6 +16,7 @@ jobs:
     defaults:
       run:
         working-directory: ./example-app
+        shell: bash
  
     strategy:
       matrix:
@@ -50,6 +51,7 @@ jobs:
     defaults:
       run:
         working-directory: ./example-app
+        shell: bash
  
     strategy:
       matrix:
@@ -87,6 +89,7 @@ jobs:
     defaults:
       run:
         working-directory: ./example-app
+        shell: bash
  
     strategy:
       matrix:
@@ -126,6 +129,7 @@ jobs:
     defaults:
       run:
         working-directory: ./example-app
+        shell: bash
  
     strategy:
       matrix:
@@ -165,6 +169,7 @@ jobs:
     defaults:
        run:
           working-directory: ./example-app
+          shell: bash
  
     strategy:
       matrix:
