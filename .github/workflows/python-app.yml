@@ -10,8 +10,16 @@ permissions:
   contents: read
 
 jobs:
-  lint:
+  build:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./example-app
+
+    strategy:
+      matrix:
+        python-version: [3.10]
 
     steps:
     - name: Checkout code
@@ -20,7 +28,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
-        python-version: "3.10"
+        python-version: "${{ matrix.python-version }}"
 
     - name: Install Poetry Action
       uses: snok/install-poetry@v1
@@ -28,62 +36,18 @@ jobs:
     - name: Install dependencies
       run: |
         poetry install --no-root
+
+    - name: Parallel Jobs
+      run: echo "Running lint, security, and formatter in parallel"
 
     - name: Lint
       run: |
         poetry run task lint
 
-  format:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.10"
-
-    - name: Install Poetry Action
-      uses: snok/install-poetry@v1
-
-    - name: Install dependencies
-      run: |
-        poetry install --no-root
-
-    - name: Formatter
-      run: |
-        poetry run task formatter
-
-  security:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.10"
-
-    - name: Install Poetry Action
-      uses: snok/install-poetry@v1
-
-    - name: Install dependencies
-      run: |
-        poetry install --no-root
-
     - name: Security
       run: |
         poetry run task security
 
-# Równoległe uruchamianie jobów
-jobs:
-  run-all-tasks:
-    runs-on: ubuntu-latest
-    needs: [lint, format, security]
-    steps:
-    - name: Check out code
-      uses: actions/checkout@v3
+    - name: Formatter
+      run: |
+        poetry run task formatter
